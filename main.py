@@ -1,7 +1,5 @@
 import speech_recognition as sr
 import pyttsx3
-
-
 from groq import Groq
 
 client = Groq(
@@ -12,22 +10,35 @@ client = Groq(
 # Initialize the recognizer
 r = sr.Recognizer()
 
+
+# language  : en_US, de_DE, ...
+# gender    : VoiceGenderFemale, VoiceGenderMale
+def change_voice(engine, language, gender='None'):
+    for voice in engine.getProperty('voices'):
+        if language.lower() in voice.name.lower():
+            engine.setProperty('voice', voice.id)
+            return True
+
+    raise RuntimeError(
+        "Language '{}' for gender '{}' not found".format(language, gender))
+
 # Function to convert text to
 # speech
 
 
 def SpeakText(command):
-
     # Initialize the engine
     engine = pyttsx3.init()
+    change_voice(engine, 'portuguese')
     engine.say(command)
     engine.runAndWait()
 
 
+# SpeakText("E la vamos mais uma vez")
+
 # Loop infinitely for user to
 # speak
-
-while (1):
+while True:
 
     # Exception handling to handle
     # exceptions at the runtime
@@ -45,7 +56,7 @@ while (1):
             audio2 = r.listen(source2)
 
             # Using google to recognize audio
-            MyText = r.recognize_google(audio2, language='en')
+            MyText = r.recognize_google(audio2, language='pt-BR')
             MyText = MyText.lower()
 
             # say Exit to Exit the program
@@ -57,7 +68,7 @@ while (1):
                 messages=[
                     {
                         "role": "user",
-                        "content": MyText,
+                        "content": f' {MyText}, responde em portugues',
                     }
                 ],
                 model="mixtral-8x7b-32768",
@@ -71,3 +82,14 @@ while (1):
 
     except sr.UnknownValueError:
         print("unknown error occurred")
+
+
+###############################
+#    LIST INSTALLED VOICES    #
+###############################
+
+# engine = pyttsx3.init()
+
+# for voice in engine.getProperty('voices'):
+#     print(voice)
+# #
