@@ -33,8 +33,8 @@ def SpeakText(command):
     engine.say(command)
     engine.runAndWait()
 
-
 # SpeakText("E la vamos mais uma vez")
+
 
 # Loop infinitely for user to
 # speak
